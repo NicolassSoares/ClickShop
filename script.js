@@ -1,5 +1,5 @@
 
-// script.js - CORRIGIDO com funções adicionadas para páginas específicas
+// script.js - ATUALIZADO com sincronização entre dispositivos
 class ClickShopProdutos {
   constructor() {
     this.key = 'produtosAfiliados';
@@ -11,6 +11,12 @@ class ClickShopProdutos {
     this.carregarProdutos();
     this.configurarBusca();
     this.rastrearEventos();
+
+    // Sincronizar entre abas/dispositivos
+    window.addEventListener('storage', () => {
+      this.produtosAfiliados = JSON.parse(localStorage.getItem(this.key)) || [];
+      this.carregarProdutos();
+    });
 
     window.addEventListener('produtosAtualizados', () => {
       this.produtosAfiliados = JSON.parse(localStorage.getItem(this.key)) || [];
@@ -63,7 +69,8 @@ class ClickShopProdutos {
       card.setAttribute('data-categoria', (p.categoria || '').toLowerCase());
 
       card.innerHTML = `
-        <img src="${p.imagem || 'image/sem-imagem.png'}" alt="${p.nome}">
+        <img src="${p.imagem || 'image/sem-imagem.png'}" alt="${p.nome}" 
+             onerror="this.src='https://via.placeholder.com/300x300/FF4500/ffffff?text=Produto+Sem+Imagem'">
         <h3>${p.nome}</h3>
         <div class="preco-container">
           ${p.precoPromocional ? `
@@ -75,7 +82,7 @@ class ClickShopProdutos {
         ${p.badgeFrete ? `<span class="badge-frete">${p.badgeFrete}</span>` : ''}
         <p class="categoria">Categoria: ${this.formatarCategoria(p.categoria)}</p>
         <button class="btn-saiba-mais" onclick="abrirModalProduto('${p.id}')">📖 Saiba Mais</button>
-        <button class="btn-comprar" onclick="window.open('${p.linkAfiliado}', '_blank')">🛒 Comprar</button>
+        <button class="btn-comprar" onclick="window.open('${p.linkAfiliado}', '_blank'); registrarClique('${p.id}')">🛒 Comprar</button>
       `;
       container.appendChild(card);
     });
@@ -177,6 +184,23 @@ function formatarCategoria(cat) {
   return map[cat] || cat;
 }
 
+function registrarClique(idProduto) {
+  const produtos = JSON.parse(localStorage.getItem('produtosAfiliados')) || [];
+  const produto = produtos.find(p => p.id == idProduto);
+  
+  if (produto) {
+    const key = 'analyticsAfiliados';
+    const analytics = JSON.parse(localStorage.getItem(key)) || [];
+    analytics.push({ 
+      produto: produto.nome, 
+      tipo: 'clique', 
+      data: new Date().toISOString(),
+      id: idProduto
+    });
+    localStorage.setItem(key, JSON.stringify(analytics));
+  }
+}
+
 // Funções para carregar produtos específicos em páginas específicas
 function carregarProdutosOfertas() {
   const container = document.getElementById('listaOfertas');
@@ -195,7 +219,8 @@ function carregarProdutosOfertas() {
     const card = document.createElement('div');
     card.className = 'produto-card';
     card.innerHTML = `
-      <img src="${p.imagem || 'image/sem-imagem.png'}" alt="${p.nome}">
+      <img src="${p.imagem || 'image/sem-imagem.png'}" alt="${p.nome}" 
+           onerror="this.src='https://via.placeholder.com/300x300/FF4500/ffffff?text=Produto+Sem+Imagem'">
       <h3>${p.nome}</h3>
       <div class="preco-container">
         ${p.precoPromocional ? `
@@ -207,7 +232,7 @@ function carregarProdutosOfertas() {
       ${p.badgeFrete ? `<span class="badge-frete">${p.badgeFrete}</span>` : ''}
       <p class="categoria">Categoria: ${formatarCategoria(p.categoria)}</p>
       <button class="btn-saiba-mais" onclick="abrirModalProduto('${p.id}')">📖 Saiba Mais</button>
-      <button class="btn-comprar" onclick="window.open('${p.linkAfiliado}', '_blank')">🛒 Comprar</button>
+      <button class="btn-comprar" onclick="window.open('${p.linkAfiliado}', '_blank'); registrarClique('${p.id}')">🛒 Comprar</button>
     `;
     container.appendChild(card);
   });
@@ -230,7 +255,8 @@ function carregarProdutosLivros() {
     const card = document.createElement('div');
     card.className = 'produto-card';
     card.innerHTML = `
-      <img src="${p.imagem || 'image/sem-imagem.png'}" alt="${p.nome}">
+      <img src="${p.imagem || 'image/sem-imagem.png'}" alt="${p.nome}" 
+           onerror="this.src='https://via.placeholder.com/300x300/FF4500/ffffff?text=Produto+Sem+Imagem'">
       <h3>${p.nome}</h3>
       <div class="preco-container">
         ${p.precoPromocional ? `
@@ -242,7 +268,7 @@ function carregarProdutosLivros() {
       ${p.badgeFrete ? `<span class="badge-frete">${p.badgeFrete}</span>` : ''}
       <p class="categoria">Categoria: ${formatarCategoria(p.categoria)}</p>
       <button class="btn-saiba-mais" onclick="abrirModalProduto('${p.id}')">📖 Saiba Mais</button>
-      <button class="btn-comprar" onclick="window.open('${p.linkAfiliado}', '_blank')">🛒 Comprar</button>
+      <button class="btn-comprar" onclick="window.open('${p.linkAfiliado}', '_blank'); registrarClique('${p.id}')">🛒 Comprar</button>
     `;
     container.appendChild(card);
   });
@@ -260,6 +286,15 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // Atualizar quando produtos forem modificados
   window.addEventListener('produtosAtualizados', () => {
+    if (window.location.pathname.includes('ofertas.html')) {
+      carregarProdutosOfertas();
+    } else if (window.location.pathname.includes('livros.html')) {
+      carregarProdutosLivros();
+    }
+  });
+  
+  // Sincronizar entre abas
+  window.addEventListener('storage', () => {
     if (window.location.pathname.includes('ofertas.html')) {
       carregarProdutosOfertas();
     } else if (window.location.pathname.includes('livros.html')) {
