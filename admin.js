@@ -44,6 +44,16 @@ class ClickShopAdmin {
     this.carregarCarrosselPainel();
     this.carregarCampanhasPainel();
     
+    // Sincronizar entre abas
+    window.addEventListener('storage', () => {
+      this.produtos = JSON.parse(localStorage.getItem(this.key)) || [];
+      this.banners = JSON.parse(localStorage.getItem(this.keyCarrossel)) || [];
+      this.campanhas = JSON.parse(localStorage.getItem(this.keyCampanhas)) || [];
+      this.carregarProdutosPainel();
+      this.carregarCarrosselPainel();
+      this.carregarCampanhasPainel();
+    });
+
     window.addEventListener('produtosAtualizados', () => {
       this.produtos = JSON.parse(localStorage.getItem(this.key)) || [];
       this.carregarProdutosPainel();
@@ -85,7 +95,11 @@ class ClickShopAdmin {
 
     this.form.reset();
     this.carregarProdutosPainel();
+    
+    // Disparar eventos para sincronização
     window.dispatchEvent(new Event('produtosAtualizados'));
+    window.dispatchEvent(new Event('storage'));
+    
     alert('✅ Produto adicionado com sucesso!');
   }
 
@@ -100,7 +114,7 @@ class ClickShopAdmin {
     };
 
     if (!novoBanner.imagem) {
-      alert('Preencha la URL da imagem do banner.');
+      alert('Preencha a URL da imagem do banner.');
       return;
     }
 
@@ -109,7 +123,11 @@ class ClickShopAdmin {
 
     this.formCarrossel.reset();
     this.carregarCarrosselPainel();
+    
+    // Disparar eventos para sincronização
     window.dispatchEvent(new Event('carrosselAtualizado'));
+    window.dispatchEvent(new Event('storage'));
+    
     alert('✅ Banner adicionado com sucesso!');
   }
 
@@ -138,7 +156,11 @@ class ClickShopAdmin {
 
     this.formCampanha.reset();
     this.carregarCampanhasPainel();
+    
+    // Disparar eventos para sincronização
     window.dispatchEvent(new Event('campanhasAtualizadas'));
+    window.dispatchEvent(new Event('storage'));
+    
     alert('✅ Campanha criada com sucesso!');
   }
 
@@ -270,6 +292,7 @@ window.voltarCoresPadrao = function() {
                                 'theme-outono', 'theme-blackfriday', 'theme-cybermonday');
   
   window.dispatchEvent(new Event('coresPadraoAtivadas'));
+  window.dispatchEvent(new Event('storage'));
   alert('🎨 Cores padrão ativadas! O site voltou ao tema laranja avermelhado e branco.');
 };
 
@@ -284,6 +307,7 @@ window.removerProduto = function (id) {
     produtos.splice(idx, 1);
     localStorage.setItem(key, JSON.stringify(produtos));
     window.dispatchEvent(new Event('produtosAtualizados'));
+    window.dispatchEvent(new Event('storage'));
     alert('✅ Produto excluído com sucesso!');
   }
 };
@@ -309,6 +333,7 @@ window.editarProduto = function (id) {
   if (idx !== -1) produtos.splice(idx, 1);
   localStorage.setItem(key, JSON.stringify(produtos));
   window.dispatchEvent(new Event('produtosAtualizados'));
+  window.dispatchEvent(new Event('storage'));
   alert('✏️ Modifique os dados do produto e clique em "Adicionar Produto" para salvar as alterações.');
 };
 
@@ -323,6 +348,7 @@ window.removerBanner = function (id) {
     banners.splice(idx, 1);
     localStorage.setItem(key, JSON.stringify(banners));
     window.dispatchEvent(new Event('carrosselAtualizado'));
+    window.dispatchEvent(new Event('storage'));
     alert('✅ Banner excluído com sucesso!');
   }
 };
@@ -343,6 +369,7 @@ window.editarBanner = function (id) {
   if (idx !== -1) banners.splice(idx, 1);
   localStorage.setItem(key, JSON.stringify(banners));
   window.dispatchEvent(new Event('carrosselAtualizado'));
+  window.dispatchEvent(new Event('storage'));
   alert('✏️ Modifique os dados do banner e clique em "Adicionar Banner" para salvar as alterações.');
 };
 
@@ -357,6 +384,7 @@ window.removerCampanha = function (id) {
     campanhas.splice(idx, 1);
     localStorage.setItem(key, JSON.stringify(campanhas));
     window.dispatchEvent(new Event('campanhasAtualizadas'));
+    window.dispatchEvent(new Event('storage'));
     alert('✅ Campanha excluída com sucesso!');
   }
 };
@@ -382,6 +410,7 @@ window.editarCampanha = function (id) {
   if (idx !== -1) campanhas.splice(idx, 1);
   localStorage.setItem(key, JSON.stringify(campanhas));
   window.dispatchEvent(new Event('campanhasAtualizadas'));
+  window.dispatchEvent(new Event('storage'));
   alert('✏️ Modifique os dados da campanha e clique em "Criar Campanha" para salvar as alterações.');
 };
 
