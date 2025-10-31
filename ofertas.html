@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClickShop - Ofertas</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="image/ic.clickshop.png">
+    <script defer src="menu-categorias.js"></script>
+    <script defer src="campanhas.js"></script>
+    <script defer src="script.js"></script>
+</head>
+<body>
+    <header>
+        <nav class="menu-principal">
+            <div class="logo">
+                <a href="index.html" class="logo-link">
+                    <img src="image/log.clickshop.png" alt="Logo ClickShop">
+                    <h1>ClickShop</h1>
+                </a>
+            </div>
+
+            <ul class="menu-links">
+                <li><a href="ofertas.html" class="ativo">🔥 Ofertas</a></li>
+                <li><a href="livros.html">📚 Livros</a></li>
+                <li class="dropdown">
+                    <a href="#">🗂️ Categorias ▾</a>
+                    <ul class="dropdown-content" id="menuCategorias"></ul>
+                </li>
+            </ul>
+
+            <div class="busca-container">
+                <input type="search" id="campoBusca" placeholder="Buscar ofertas..." />
+                <button class="btn-buscar">🔍</button>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <div id="bannerCampanha"></div>
+
+        <section class="produtos-section">
+            <h2>🔥 Ofertas Especiais</h2>
+            <div id="listaOfertas" class="produtos-grid"></div>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2025 ClickShop — Todos os direitos reservados.</p>
+    </footer>
+</body>
+</html>
