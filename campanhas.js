@@ -9,6 +9,12 @@ class ClickShopCampanhas {
     this.carregarCampanhas();
     this.renderizarBannerCampanha();
 
+    // Ouvir eventos de atualização
+    window.addEventListener('storage', () => {
+      this.carregarCampanhas();
+      this.renderizarBannerCampanha();
+    });
+    
     window.addEventListener('campanhasAtualizadas', () => {
       this.carregarCampanhas();
       this.renderizarBannerCampanha();
