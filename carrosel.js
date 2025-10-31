@@ -18,6 +18,12 @@ class ClickShopCarrossel {
     this.carregarBanners();
     this.renderizarCarrossel();
 
+    // Ouvir eventos de atualização
+    window.addEventListener('storage', () => {
+      this.carregarBanners();
+      this.renderizarCarrossel();
+    });
+    
     window.addEventListener('carrosselAtualizado', () => {
       this.carregarBanners();
       this.renderizarCarrossel();
